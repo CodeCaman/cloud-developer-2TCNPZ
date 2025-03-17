@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos Service</title>
+</head>
+<body>
+    <h1>Pedidos Service</h1>
+    <form id="pedidoForm">
+        <label for="cliente_id">Cliente ID:</label>
+        <input type="text" id="cliente_id" name="cliente_id" required><br>
+        <label for="produto_id">Produto ID:</label>
+        <input type="text" id="produto_id" name="produto_id" required><br>
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" name="quantidade" required><br>
+        <label for="forma_pagamento">Forma de Pagamento:</label>
+        <input type="text" id="forma_pagamento" name="forma_pagamento" required><br>
+        <button type="submit">Criar Pedido</button>
+    </form>
+    <div id="response"></div>
+
+    <h2>Status do Pedido</h2>
+    <form id="statusForm">
+        <label for="pedido_id">Pedido ID:</label>
+        <input type="text" id="pedido_id" name="pedido_id" required><br>
+        <button type="submit">Verificar Status</button>
+    </form>
+    <div id="statusResponse"></div>
+
+    <h2>Atualizar Status do Pedido</h2>
+    <form id="atualizarStatusForm">
+        <label for="atualizar_pedido_id">Pedido ID:</label>
+        <input type="text" id="atualizar_pedido_id" name="atualizar_pedido_id" required><br>
+        <label for="novo_status">Novo Status:</label>
+        <select id="novo_status" name="novo_status" required>
+            <option value="em processamento">Em Processamento</option>
+            <option value="enviado">Enviado</option>
+            <option value="entregue">Entregue</option>
+        </select><br>
+        <button type="submit">Atualizar Status</button>
+    </form>
+    <div id="atualizarStatusResponse"></div>
+
+    <h2>Histórico de Pedidos por Cliente</h2>
+    <form id="historicoForm">
+        <label for="historico_cliente_id">Cliente ID:</label>
+        <input type="text" id="historico_cliente_id" name="historico_cliente_id" required><br>
+        <button type="submit">Ver Histórico</button>
+    </form>
+    <div id="historicoResponse"></div>
+
+    <script>
+        document.getElementById('pedidoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const cliente_id = document.getElementById('cliente_id').value;
+            const produto_id = document.getElementById('produto_id').value;
+            const quantidade = document.getElementById('quantidade').value;
+            const forma_pagamento = document.getElementById('forma_pagamento').value;
+
+            const data = {
+                cliente_id: cliente_id,
+                itens: [{ produto_id: produto_id, quantidade: quantidade }],
+                forma_pagamento: forma_pagamento
+            };
+
+            fetch('/pedidos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = 'Pedido criado com ID: ' + data.id;
+            });
+        });
+
+        document.getElementById('statusForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const pedido_id = document.getElementById('pedido_id').value;
+
+            fetch('/pedidos/' + pedido_id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('statusResponse').innerText = data.error;
+                } else {
+                    document.getElementById('statusResponse').innerText = 'Status do Pedido: ' + data.status;
+                }
+            });
+        });
+
+        document.getElementById('atualizarStatusForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const pedido_id = document.getElementById('atualizar_pedido_id').value;
+            const novo_status = document.getElementById('novo_status').value;
+
+            const data = {
+                status: novo_status
+            };
+
+            fetch('/pedidos/' + pedido_id + '/status', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('atualizarStatusResponse').innerText = data.error;
+                } else {
+                    document.getElementById('atualizarStatusResponse').innerText = 'Status atualizado para: ' + data.status;
+                }
+            });
+        });
+
+        document.getElementById('historicoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const cliente_id = document.getElementById('historico_cliente_id').value;
+
+            fetch('/clientes/' + cliente_id + '/pedidos')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('historicoResponse').innerText = JSON.stringify(data, null, 2);
+            });
+        });
+    </script>
+</body>
+</html>
