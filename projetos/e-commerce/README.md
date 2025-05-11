@@ -100,6 +100,7 @@ No diretório raiz do projeto, execute:
 docker-compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml up -d
 docker-compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
+http://localhost:5082/
 
 ### **4. Acessar os Microserviços**
 
