@@ -182,6 +182,22 @@ Entra no container de forma interativa com terminal bash
 
 ## Docker Compose 🚀 
 
+
+## 🔍 Comparativo
+
+| Nome do Arquivo        | Compatibilidade             | Comentário                                                                 |
+|------------------------|-----------------------------|---------------------------------------------------------------------------|
+| `docker-compose.yml`   | ✅ Amplamente compatível     | Usado com `docker-compose` (CLI legado) e também com `docker compose` (CLI moderno) |
+| `compose.yml`          | ✅ Docker Compose v2+        | Suportado apenas pelo `docker compose` (plugin integrado ao Docker moderno) |
+
+---
+
+## ✅ Recomendações
+
+- Use `docker-compose.yml` para garantir **máxima compatibilidade** com ambientes locais, CI/CD e times diferentes.
+- Use `compose.yml` apenas se você **tem certeza** de que todos usam o Docker moderno com suporte ao Compose v2+.
+
+
 ### Sobe os containers definidos no docker-compose.yml (e no override, se houver).
  
  ```bash
